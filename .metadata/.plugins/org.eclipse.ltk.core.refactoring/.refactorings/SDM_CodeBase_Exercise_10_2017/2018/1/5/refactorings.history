@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;reducer&apos; in &apos;de.tuda.sdm.dmdb.mapReduce.task.exercise.ShuffleSortTask.run()&apos; to &apos;shuffle&apos;&#x0A;- Original project: &apos;SDM_CodeBase_Exercise_10_2017&apos;&#x0A;- Original element: &apos;de.tuda.sdm.dmdb.mapReduce.task.exercise.ShuffleSortTask.run().reducer&apos;&#x0A;- Renamed element: &apos;reducer&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;reducer&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;de.tuda.sdm.dmdb.mapReduce.task.exercise{ShuffleSortTask.java[ShuffleSortTask~run@reducer!1412!1506!1492!1498!QReducer\&lt;QAbstractSQLValue;QAbstractSQLValue;QAbstractSQLValue;QAbstractSQLValue;&gt;;!0!false" name="shuffle" references="true" stamp="1517246727086" version="1.0"/>
+</session>

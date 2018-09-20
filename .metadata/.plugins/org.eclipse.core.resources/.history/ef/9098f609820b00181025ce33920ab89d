@@ -1,0 +1,146 @@
+package sdm;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import sdm.exercise.CustomReader;
+import sdm.exercise.CustomWriter;
+import sdm.exercise.DeviceUserMapper;
+import sdm.exercise.DeviceVisitsMapper;
+import sdm.exercise.DeviceVisitsReducer;
+import sdm.exercise.UserDeviceReducer;
+
+public class Job {
+	public static void main(String[] args) throws IOException {
+		try {
+			run("visits_small.csv", "favorites_small.json");
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void run(String visitDatasetFileName, String outFileName) throws IOException, URISyntaxException {
+		/*
+		 * Read all the data
+		 */
+
+		// Create reader
+		Context<String, String> readerContext = new Context<>();
+		Context<String, String> readerContext2 = new Context<>();
+		Reader<String, String> reader = new CustomReader<>();
+		reader.read(new File("/devices.csv"), "1", readerContext2);
+
+		/*
+		 * Mappers
+		 */
+		// map userid to deviceid
+		Context<String, String> mapper1Context = new Context<>();
+		Mapper<String, String, String, String> mapper1 = new DeviceUserMapper<>();
+		mapper1.run(readerContext2, mapper1Context);
+		reader.read(new File("/visits_small.csv"), "1", readerContext);
+
+		// map deviceid to website
+		Context<String, String> mapper2Context = new Context<>();
+		Mapper<String, String, String, String> mapper2 = new DeviceVisitsMapper<>();
+		mapper2.run(readerContext, mapper2Context);
+
+		/*
+		 * Reducers
+		 */
+		
+		Context<String, Map<String, AtomicInteger>> reducer1Context = new Context<>();
+		Reducer<String, String, String, Map<String, AtomicInteger>> reducer1 = new DeviceVisitsReducer<>();
+		reducer1.run(mapper2Context, reducer1Context);
+
+		Context<String, List<String>> reducer2Context = new Context<>();
+		Reducer<String, String, String, List<String>> reducer2 = new UserDeviceReducer<>();
+		reducer2.run(mapper1Context, reducer2Context);
+
+		Map<String, Map<String, AtomicInteger>> combined = new HashMap<>();
+		
+		/*
+		 * Merge results
+		 */
+		for (String u : reducer2Context.keys) {
+			for (String device : reducer2Context.keyValues.get(u).get(0)) {
+				if (!reducer1Context.keyValues.containsKey(device))
+					continue;
+				
+				Map<String, AtomicInteger> c = reducer1Context.keyValues.get(device).get(0);
+				if (combined.containsKey(u)) {
+					Map<String, AtomicInteger> map = combined.get(u);
+					
+					for (String k : c.keySet()) {
+						
+						if (map.containsKey(k)) {
+							int i = map.get(k).intValue(); int j = c.get(k).intValue();
+							map.put(k, new AtomicInteger(i + j));
+						} else map.put(k, c.get(k));
+					}
+					
+					combined.put(u, map);
+				} else combined.put(u, c);
+			}
+		}
+		
+		// write results
+		writeResults(outFileName, findMostVisited(combined));
+	}
+	
+	/**
+	 * Find most visited websites for users
+	 * 
+	 * @param map
+	 * @return
+	 */
+	private static Context<String, List<String>> findMostVisited(Map<String, Map<String, AtomicInteger>> map) {
+		Context<String, List<String>> userVisits = new Context<>();
+		
+		// iterate over visited websites per user
+		for (Entry<String, Map<String, AtomicInteger>> e : map.entrySet()) {
+			// create a list of most visited websites per user
+			List<String> list = new ArrayList<>();
+			
+			// init max value to min integer value
+			int maxValue = Integer.MIN_VALUE;
+			
+			for (Entry<String, AtomicInteger> entryCounts : e.getValue().entrySet()) {
+				
+				int v = entryCounts.getValue().intValue();
+				
+				// found a larger value
+				if (v >= maxValue) {
+					maxValue = v;
+					list.add(entryCounts.getKey());
+				}
+			}
+			
+			// append user list to results
+			userVisits.write(e.getKey(), list);
+		}
+		
+		return userVisits;
+	}
+	
+	/**
+	 * Write results to json
+	 * @param outFileName
+	 * @param resultMap
+	 * @throws IOException
+	 */
+	private static void writeResults(String outFileName, Context<String, List<String>> resultMap) throws IOException {
+		CustomWriter<String, List<String>> writer = new CustomWriter<>(new File(outFileName));
+		writer.start();
+		System.out.println(resultMap.keys);
+		writer.run(resultMap);
+		writer.finish();
+		writer.flush();
+	}
+}

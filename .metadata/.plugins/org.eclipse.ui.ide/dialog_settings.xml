@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="/home/fabian/GitProjects/Master/SDM/jk89novy-sdm040/SDM_Exercise_04_2017"/>
+		<item value="/home/fabian/GitProjects/Master/SDM"/>
+	</list>
+	<section name="ExternalProjectImportWizard">
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/home/fabian/GitProjects/Master/SDM/SDM_Exercise_10_Task_1"/>
+			<item value="/home/fabian/GitProjects/Master/SDM/SDM_CodeBase_Exercise_10_2017"/>
+			<item value="/home/fabian/GitProjects/Master/SDM/SDM_Task_09"/>
+			<item value="/home/fabian/GitProjects/Master/SDM/SDM_CodeBase_Exercise_09_2017"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
+	</section>
+	<section name="WORKBENCH_SETTINGS">
+		<list key="ENABLED_TRANSFERS">
+		</list>
+	</section>
+	<section name="NewWizardAction">
+		<item value="org.eclipse.m2e.core.wizards.Maven2ProjectWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="org.eclipse.jdt.ui.java"/>
+			<item value="org.eclipse.m2e"/>
+		</list>
+	</section>
+	<section name="ChooseWorkspaceDialogSettings">
+		<item value="583" key="DIALOG_X_ORIGIN"/>
+		<item value="330" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

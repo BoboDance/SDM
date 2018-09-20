@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.access.AbstractIndexElement"/>
+<fullyQualifiedTypeName name="java.lang.IllegalArgumentException"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.storage.types.SQLInteger"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.storage.types.SQLVarchar"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.access.exercise.ApproximateBitmapIndex"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.net.TCPClient"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.net.TCPServer"/>
+<fullyQualifiedTypeName name="java.util.Queue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.LinkedTransferQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.TransferQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.LinkedBlockingQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.BlockingQueue"/>
+<fullyQualifiedTypeName name="java.util.PriorityQueue"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.storage.types.AbstractSQLValue"/>
+<fullyQualifiedTypeName name="KEYOUT"/>
+<fullyQualifiedTypeName name="KEYIN"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.storage.Record"/>
+<fullyQualifiedTypeName name="java.util.concurrent.ConcurrentLinkedQueue"/>
+<fullyQualifiedTypeName name="java.lang.Iterable"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="VALUEIN"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.sql.operator.exercise.TableScan"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.mapReduce.operator.exercise.Mapper"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.storage.AbstractRecord"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.sql.operator.Shuffle"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.sql.operator.exercise.Sort"/>
+<fullyQualifiedTypeName name="de.tuda.sdm.dmdb.mapReduce.operator.exercise.Reducer"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+</qualifiedTypeNameHistroy>

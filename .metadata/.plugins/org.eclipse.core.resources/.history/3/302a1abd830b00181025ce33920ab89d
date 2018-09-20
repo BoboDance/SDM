@@ -1,0 +1,53 @@
+package de.tuda.sdm.dmdb.mapReduce.task.exercise;
+
+import java.util.Map;
+import de.tuda.sdm.dmdb.access.exercise.HeapTable;
+import de.tuda.sdm.dmdb.mapReduce.operator.exercise.Reducer;
+import de.tuda.sdm.dmdb.mapReduce.task.ShuffleSortTaskBase;
+import de.tuda.sdm.dmdb.sql.operator.Shuffle;
+import de.tuda.sdm.dmdb.sql.operator.exercise.Sort;
+import de.tuda.sdm.dmdb.sql.operator.exercise.TableScan;
+import de.tuda.sdm.dmdb.storage.AbstractRecord;
+import de.tuda.sdm.dmdb.storage.types.AbstractSQLValue;
+
+/**
+ * Defines what happens during the shuffle&sort-phase of a map-reduce job Ie.
+ * implements the operator chains for a shuffle&sort-phase The last operator in
+ * the chain writes to the output, ie. is used to populate the output
+ * 
+ * @author melhindi
+ *
+ */
+public class ShuffleSortTask extends ShuffleSortTaskBase {
+
+	public ShuffleSortTask(HeapTable input, HeapTable output, int nodeId, Map<Integer, String> nodeMap,
+			int partitionColumn, int numReducers) {
+		super(input, output, nodeId, nodeMap, partitionColumn, numReducers);
+	}
+
+	@Override
+	public void run() {
+		// TODO: implement this method
+		// read data from input (Remember: There is a special operator to read data from
+		// a Table)
+		this.waitForCompletion();
+		TableScan scan = new TableScan(this.input);
+		// define the shuffle-operator, use
+		// shuffleOperator.setHashFunction(this.numReducers); to change the hasfunction
+		// and account for a different number of reducers
+		Shuffle shuffle = new Shuffle(scan, this.nodeId, this.nodeMap, this.port, this.partitionColumn);
+		// define the sort operator, the base class already defines the comparator that
+		// you can use
+		Sort sort = new Sort(shuffle, this.recordComparator);
+		// process the input and write to the output
+		sort.open();
+		AbstractRecord record = sort.next();
+		while (record != null) {
+			output.insert(record);
+			record = sort.next();
+		}
+		// processing done
+		sort.close();
+	}
+
+}

@@ -1,0 +1,157 @@
+\documentclass{scrartcl}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{amsmath}
+
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\chead{Homework 8}
+\lhead{Group 40}
+\rhead{\today}
+
+\begin{document}
+
+\section*{Homework 8}
+\subsection*{Problem 8.1}
+
+\textbf{a)}
+
+Fragmentation is needed if data becomes too large to fit on a single node. The data is then split up into several parts. This also allows a query to run in parallel on different nodes at a time, which potentially speeds up the processing. 
+Replication is used to achieve load balancing and fault tolerance. Having the same fragment on multiple nodes can help to reduce \glqq{}hotspots\grqq. However, it is very hard to predict how the fragments should be distributed across the landscape. 
+
+\textbf{b)} 
+
+When using horizontal fragmentation, one will get a set of tuples (full records) in each fragment, when the data is split vertical, one will retrieve a set of attributes (\glqq{}columns\grqq{}). 
+
+In the case of a horizontal split the data can be reconstructed using the UNION operator, for vertical fragments this is achieved by joining the individual fragments using the row identifiers. 
+
+\textbf{Example horizontal:} 
+A company has three invoicing departments, each department takes care of invoices for a different type of customers.
+Dep1 deals with big corporations, which range from CID 0 -- 9999 , dep2 has small business from CID 10000 -- 19999 and dep3 private customers for CIDs 20000 -- 29999. 
+With horizontal Fragmentation the data can be seperated in three partitions and each department only needs to access a single node. 
+
+\textbf{Example vertical:} 
+Two other departments, demand managment and shipping, work with order data. 
+However, the demand management needs access to information like price, etc. and shipping to shipping location, etc. 
+Vertical Fragmentation helps to seperate these attributes onto different nodes, now each deparment only needs to access \glqq{}their\grqq{} nodes. 
+
+\newpage{}
+
+\textbf{c)}
+
+The criteria are Completeness, Reconstruction and Disjointness.
+
+Possible Problems for (R $\widehat{=}$ some example Relation)
+\begin{itemize}
+	\item Completeness:
+	\begin{itemize}
+		\item Fragment 1: $\sigma_{Year > 2001}(R)$
+		\item Fragment 2: $\sigma_{Year < 1995}(R)$
+	\end{itemize}
+
+	\item Reconstruction:
+	\begin{itemize}
+		\item Fragment 1: $\sigma_{Year > 2001}(R)$
+		\item Fragment 2: $\sigma_{Year < 1995}(R)$
+		\item If tuples are missing, the relation cannot be reconstructed.
+	\end{itemize}
+
+	\item Disjointness:
+	\begin{itemize}
+		\item Fragment 1: $\sigma_{Year > 2005}(R)$
+		\item Fragment 2: $\sigma_{Year < 2006}(R)$ 
+	\end{itemize}
+\end{itemize}
+
+\newpage
+
+\textbf{d)} 
+
+\begin{itemize}
+	\item \textbf{Round-Robin} 
+	\begin{itemize}
+		\item \textit{Adv:} Data is distributed evenly across the system.
+		\item \textit{Disadv:} Pruning is not possible. 
+	\end{itemize}
+	\item \textbf{Range-Partitioning} 
+	\begin{itemize}
+		\item \textit{Adv:} Pruning of even range queries is possible.
+		\item \textit{Disadv:} Data may not be distributed evenly $\longrightarrow$ data skew
+	\end{itemize}
+	\item \textbf{Hash-Partitioning} 
+	\begin{itemize}
+		\item \textit{Adv:} Depending on the hash function, the data is distributed evenly. Pruning of single values is possible.
+		\item \textit{Disadv:} Pruning of range queries is not possible. 
+	\end{itemize}
+\end{itemize}
+
+\textbf{e)} 
+
+To support co-partitioning tables have to be partitioned on the same key (the join key).
+ For the example we have to use customer.custkey in table customer and calls.custkey in table calls. 
+ This way ensures that all calls for one customer are located in one partition, this enables pruning.
+For two fragments the hash function $h(k) = k\ mod\ 2$ on the custkeys could be used.
+Query plan:
+
+\begin{align*}
+	\boldsymbol{\pi}_{call.amount,call.month,cust.firstname,cust.lastname}( \\
+	\boldsymbol{\sigma}_{cust.custkey=1\ \boldsymbol{AND}\ call.month=12/2017}(cust_{1} \boldsymbol{\bowtie} calls_{1}))
+\end{align*}
+
+We assume just one possible plan needs to be given, not the perfect execution plan (The DMBS optimizes the query.).
+
+\textbf{f)} 
+
+Allocation is the process of assigning (replicated) fragments to different nodes (How shall the fragments be distributed across the system?). This is achieved by an allocation algorithm, which tries to minimize the runtime and maximizes throughput
+With an optimal distribution, which is hard to achieve, because it is generally not known to the system how the data will be queried in future ($\longrightarrow$ heuristics). 
+
+\subsection*{Problem 8.2}
+
+\textbf{a)} 
+
+Naming Convention: Relation \texttt{Order} is \texttt{O}, \texttt{shipping} is \texttt{ship} and \texttt{invoice} is \texttt{inv} \\
+
+\begin{itemize}
+	\item Fragments for Darmstadt: \\
+	\begin{itemize}
+		\item Shipping department \\
+			$F_1 := \pi_{O.order\_number,O.article,O.customer\_name,O.quantity,O.ship\_zip,O.ship\_city,O.ship\_street}\\
+			(\sigma_{O.ship\_zip \ge 64283\ AND\ O.ship\_zip \le 64297}(O))$ \\
+		\item Invoicing department \\
+			$F_2 := \pi_{O.order\_number,O.total\_price,O.inv\_zip,O.inv\_city,O.inv\_street}(O)$ \\
+	\end{itemize}
+	\item Fragments for Weiterstadt: \\
+		$F_3 := \pi_{O.order\_number,O.article,O.customer\_name,O.quantity,O.ship\_zip,O.ship\_city,O.ship\_street}( \\								\sigma_{O.ship\_zip < 64283\ OR\ O.ship\_zip > 64297}(O))$
+\end{itemize}
+
+\textbf{b)} Reconstruction: \\
+
+Assuming we can use a natural Join:
+
+($F_1 \cup F_3) \bowtie F_2$\\
+SELECT * FROM ($F_1$ UNION ALL $F_3$) x NATURAL JOIN $F_2$;
+
+else:
+
+$(F_1 \cup F_3) \bowtie_{(F_1 \cup F_3).order\_number = F_2.order\_number} (F_2)$\\
+SELECT * FROM ($F_1$ UNION ALL $F_3$) x INNER JOIN $F_2$ \\
+ON x.order\_number = $F_2$.order \_number;\\
+
+
+
+\textbf{c)} First of all, the zip code has to  be updated within the tuple. 
+Further, the wrong record might have been saved in a different fragment and then has to be transferred to the correct one. 
+Alternatively, the zip code was in the range of 64283 -- 64297, in this cas the update step suffices.
+\subsection*{Problem 8.3}
+
+We assume the fragemented table is Employee not Employer (which is is not known).
+
+\textbf{a)} SELECT * FROM Employee; \\
+\textbf{b)} SELECT * FROM EmployeeOther UNION EmployeeWE; \\
+\textbf{c)} SELECT * FROM EmployeeOther AT N\_1 UNION EmployeeWE AT N\_2;
+
+\end{document}
