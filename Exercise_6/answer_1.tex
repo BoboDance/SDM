@@ -1,0 +1,73 @@
+\documentclass{scrartcl}
+\usepackage[ngerman, english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{kpfonts}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{fancyhdr}
+\usepackage{xcolor,listings}
+\usepackage{textcomp}
+\lstset{
+	upquote=true
+	language=SQL,
+	showspaces=false,
+	basicstyle=\ttfamily,
+	numbers=left,
+	numberstyle=\tiny,
+	commentstyle=\color{gray},
+	keywordstyle=\color{blue}\ttfamily\bfseries,
+	morekeywords={SELECT, FROM, WHERE, ON, GROUP, BY, ORDER, AND, OR, INNER, JOIN, AS}
+}
+
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\lhead{Group 40}
+\rhead{\today}
+\chead{SDM WS 2017/2018}
+
+\begin{document}
+
+\section*{Solution for 6.1}
+
+\begin{itemize}
+	\item[a)]
+		A data warehouse is a 
+		\begin{itemize}
+			\item \textbf{subject-oriented}, 
+			\item \textbf{integrated}, 
+			\item \textbf{non-volatile} and 
+			\item \textbf{time-variant}
+		\end{itemize}
+		collection of data.
+	\item[b)] \mbox{}
+	\begin{enumerate}
+		\item \textbf{Data Modeling} takes care of \glqq{}organizing\grqq{} the data and provides a common structure/model  for the integrated data from the following step. Usually, the data is organized in multidimensional data cubes, which can be modelled e.g. with the most common architecture: the Star Schema. 
+		\item \textbf{Data Integration} ensures with the ETL process to have a homogenous database. The data needs to be extracted from heterogenous sources, transformed (e.\,g. different units of measurement $\rightarrow$ \texttt{Dollar, Euro}) and loaded into the data model from above. The key aspect here is to ensure equal value encoding, same units of measure, etc.  
+		\item \textbf{Querying} supports operations (Star-Queries) on the data cube(s) in order to support the decisions made by
+			the business. In order to improve the querying, SQL also provies some extensions (e.g. Rollup, Limit,Skyline). Typical requests are: revenue/year or revenue/month.
+	\end{enumerate}
+	\item[c)] \mbox{}
+		\begin{itemize}
+			\item \textbf{Slicing:} Get a slice of the cube.
+			\item \textbf{Dicing:} Get a smaller cube.
+			\item \textbf{Drill-Down/Roll-Up:} Show more details/aggregated view.
+		\end{itemize}
+	\item[d)]
+		\textbf{Extract}, \textbf{Transform} and \textbf{Load} (ETL). In order to gain a
+		\glqq{}Single Point/Source of Truth\grqq{} the data must be collected from different heterogenous sources
+		(\textbf{Extract}). As already mentioned above in (b) the data typically does not have the same format and needs to be transformed (e.g. change encoding, units, etc. ) to reach a common foundation (\textbf{Transform}).
+		When the data is cleaned and has the same structure, it can be integrated into the data modell (e.g. Star Schema) (\textbf{Load}).
+	\item[e)] \mbox{}
+	\begin{enumerate}
+		\item \textbf{Static Hierarchies:} The levels in this hierarchy do not change, further this type of hierarchy is implemented by utilizing different columns of one table. Typically this can be found for regional or time-wise hierarchies, e.g. a global corporation has different headquarters per continent which supervise different country-specific headquarters, which again have some smaller sales organisations, the hierarchy could look like: \newline{}
+		\texttt{regional HQ $\rightarrow$ country-specific HQ $\rightarrow$ city sales org.}
+		\item \textbf{Dynamic Hierarchies:} The levels of this hierarchy are flexibile, further this type of hierarchy is implemented by utilizing a recursive relationship.
+		Typically this can be found for management hierarchies or product compositions (BOM), e.g. a company sells different cars, these cars consist of doors, body, chassis, etc. which again have subelements like speakers, plastic covers ,etc. (\texttt{door $\rightarrow$ speaker $\rightarrow$ speaker membrane}).
+		Depending on the complexity of each part the hierarchy has a different size (door vs chassis).
+
+	\end{enumerate}	
+\end{itemize}
+
+\end{document}

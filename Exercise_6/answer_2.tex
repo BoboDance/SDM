@@ -1,0 +1,119 @@
+\documentclass{scrartcl}
+\usepackage[ngerman, english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{kpfonts}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{fancyhdr}
+\usepackage{xcolor,listings}
+\usepackage{textcomp}
+\lstset{
+	upquote=true
+	language=SQL,
+	showspaces=false,
+	basicstyle=\ttfamily,
+	numbers=left,
+	numberstyle=\tiny,
+	commentstyle=\color{gray},
+	keywordstyle=\color{blue}\ttfamily\bfseries,
+	morekeywords={SELECT, FROM, WHERE, ON, GROUP, BY, ORDER, AND, OR, INNER, JOIN, AS}
+}
+
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\lhead{Group 40}
+\rhead{\today}
+\chead{SDM WS 2017/2018}
+
+
+\begin{document}
+
+\section*{Solution for 6.2}
+
+\begin{itemize}
+\item[a)] \texttt{\textbf{CallDuration}(\\
+	\hspace*{10mm}\textbf{Caller.CountryPrefix} varchar(5),\\
+	\hspace*{10mm}\textbf{Caller.Number} varchar(100),\\
+	\hspace*{10mm}\textbf{Callee.CountryPrefix} varchar(5),\\
+	\hspace*{10mm}\textbf{Callee.Number} varchar(100),\\
+	\hspace*{10mm}\textbf{Year} int,\\
+	\hspace*{10mm}\textbf{Month} int,\\
+	\hspace*{10mm}\textbf{Day} int,\\
+	\hspace*{10mm}\textbf{Hour} int,\\
+	\hspace*{10mm}\textbf{Minute} int,\\
+	\hspace*{10mm}\textbf{LocCaller.XCoord} int,\\
+	\hspace*{10mm}\textbf{LocCaller.YCoord} int,\\
+	\hspace*{10mm}\textbf{LocCallee.XCoord} int,\\
+	\hspace*{10mm}\textbf{LocCallee.YCoord} int,\\
+	\hspace*{10mm}\textbf{duration} int\\)}
+
+	The primary key consists of all attributes besides the duration. 
+
+\item[b)] Name of each caller together with the total duration of all of his calls in 2017
+\begin{lstlisting}
+SELECT cd.CountryPrefix, cd.Number, c.name, SUM(cd.duration)
+FROM CallDuration AS cd INNER JOIN Caller AS c
+ON c.CountryPrefix = cd.CountryPrefix
+AND c.Number = cd.Number
+WHERE cd.Year = 2017
+GROUP BY cd.CountryPrefix, cd.Number;
+\end{lstlisting}
+
+The projection of \texttt{cd.CountryPrefix} and \texttt{cd.Number} is not necessary and also not explicitly stated in the exercise, but in the given schema names cannot be assumed to be unique, therefore it would be easier for an user to distinguish 50 different John Smith with these attributes.
+
+\item[c)]
+
+\texttt{\textbf{Caller}(\textbf{CountryPrefix} varchar(5), \textbf{Number} varchar(100), \textbf{Name} text) \\
+\textbf{Callee}(\textbf{CountryPrefix} varchar(5), \textbf{Number} varchar(100), \textbf{Name} text) \\
+\textbf{TimeOfCall}(\textbf{Year} int, \textbf{Month}, int, \textbf{Day} int, \textbf{Hour} int, \textbf{Minute} int) \\
+\textbf{Cell}(\textbf{XCoord} int, \textbf{YCoord} int, \textbf{id} int)}
+
+We assume that \texttt{id} is the primary key of the \texttt{Cell} relation. Futher, the cell id is included twice, callee and caller have both an entry. The task suggested: contain the cell id callers \textbf{and} callees location.
+
+\texttt{\textbf{CallDuration}(\\
+	\hspace*{10mm}\textbf{Caller.CountryPrefix} varchar(5),\\
+	\hspace*{10mm}\textbf{Caller.Number} varchar(100),\\
+	\hspace*{10mm}\textbf{Callee.CountryPrefix} varchar(5),\\
+	\hspace*{10mm}\textbf{Callee.Number} varchar(100),\\
+	\hspace*{10mm}\textbf{Year} int,\\
+	\hspace*{10mm}\textbf{Month} int,\\
+	\hspace*{10mm}\textbf{Day} int,\\
+	\hspace*{10mm}\textbf{Hour} int,\\
+	\hspace*{10mm}\textbf{Minute} int,\\
+	\hspace*{10mm}\textbf{LocCaller.XCoord} int,\\
+	\hspace*{10mm}\textbf{LocCaller.YCoord} int,\\
+	\hspace*{10mm}\textbf{LocCallee.XCoord} int,\\
+	\hspace*{10mm}\textbf{LocCallee.YCoord} int,\\
+	\hspace*{10mm}\textbf{CallerCellId} int,\\
+	\hspace*{10mm}\textbf{CalleeCellId} int,\\
+	\hspace*{10mm}\textbf{duration} int\\)}
+	
+	\textbf{Thoughts:}\\
+Task 6.2 a) mentions to link the given information to the duration field and in task 6.2 c) it says contain the cell id of callers and callees location. This was reason enough for us to believe that in task 6.2 c) we only include the cell information and everything else should already be there or not be removed. 
+For us it is unclear how the location coordinates relate to the cell information (One entry for each X/Y coordinate combination?, How is it enough for a cell to have only one combination of X/Y coordinates? Is it the center of a circle?). \\
+
+\item[d)] Total duration of calls per callers cell
+
+\begin{lstlisting}
+SELECT cd.CallerCellId, SUM(cd.duration) 
+FROM CallDuration AS cd 
+GROUP BY cd.CallerCellId;
+\end{lstlisting}
+
+\item[e)] Count of calls with caller and callee in the same cell in January for
+each cell and year
+\begin{lstlisting}
+SELECT cd.CallerCellId, cd.Year, COUNT(*)
+FROM CallDuration as cd
+WHERE cd.Month = 'January'
+AND cd.CallerCellId = cd.CalleeCellId
+GROUP BY cd.CallerCellId, cd.Year;
+\end{lstlisting}
+
+\item[f)] The primary key of the fact table consists of \textbf{11} constituents, the exact locations of caller and callee were removed.
+
+\end{itemize}
+
+\end{document}
